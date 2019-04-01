@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/loganalyzer">
+        <file>loading.gif</file>
+        <file>failed.png</file>
+        <file>succeeded.png</file>
+    </qresource>
+</RCC>
