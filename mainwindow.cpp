@@ -1,22 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QSqlRelationalDelegate>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QSqlRelationalTableModel>
 #include <QMessageBox>
 #include <QStringBuilder>
 #include <QMenu>
 #include <QAction>
 #include <QDateTime>
-#include <QSqlRecord>
-#include <QSqlRelation>
 #include <QDebug>
 
 #include "wizard/importwizard.h"
 #include "dialogs/opendialog.h"
 #include "dialogs/graphdialog.h"
-#include "models/sqlrelationaltablemodel.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,8 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_ui->lineEdit, &QLineEdit::returnPressed, this, &MainWindow::updateQuery);
     connect(m_ui->pushButton, &QPushButton::pressed, this, &MainWindow::updateQuery);
 
-    m_ui->tableView->setItemDelegate(new QSqlRelationalDelegate(m_ui->tableView));
-
     connect(m_ui->tableView, &QWidget::customContextMenuRequested, this, &MainWindow::showContextMenu);
 }
 
@@ -61,7 +56,6 @@ void MainWindow::newClicked()
 
         m_database = wizard.database();
         setupModel();
-        updateQuery();
     }
 }
 
@@ -79,7 +73,6 @@ void MainWindow::openClicked()
 
         m_database = dialog.database();
         setupModel();
-        updateQuery();
     }
 }
 
@@ -105,16 +98,57 @@ void MainWindow::graphClicked()
 
 void MainWindow::updateQuery()
 {
-    auto filter = m_ui->lineEdit->text();
+    QString sql = "SELECT "
+                      "`Logs`.`ID` AS ID, "
+                      "`Logs`.`Timestamp` AS ID, "
+                      "`Hosts`.`Name` AS Host, "
+                      "`Processes`.`Name` AS Process, "
+                      "`Filenames`.`Name` AS Filename, "
+                      "`Threads`.`Name` AS Thread, "
+                      "`Types`.`Name` AS Type, "
+                      "`Logs`.`Message` AS Message "
+                  "FROM "
+                      "`Logs` "
+                  "LEFT JOIN "
+                      "`Hosts` "
+                  "ON "
+                      "`Logs`.`HostID` = `Hosts`.`ID` "
+                  "LEFT JOIN "
+                      "`Processes` "
+                  "ON "
+                      "`Logs`.`ProcessID` = `Processes`.`ID` "
+                  "LEFT JOIN "
+                      "`Filenames` "
+                  "ON "
+                      "`Logs`.`FilenameID` = `Filenames`.`ID` "
+                  "LEFT JOIN "
+                      "`Threads` "
+                  "ON "
+                      "`Logs`.`ThreadID` = `Threads`.`ID` "
+                  "LEFT JOIN "
+                      "`Types` "
+                  "ON "
+                      "`Logs`.`TypeID` = `Types`.`ID` ";
+
+    auto filter = m_ui->lineEdit->text().replace("||", "OR").replace("&&", "AND");
     if (!filter.trimmed().isEmpty())
     {
-        filter.replace("||", "OR");
-        filter.replace("&&", "AND");
-        m_model->setFilter(filter);
+        sql.append("WHERE ");
+        sql.append(filter);
     }
 
-    if (!m_model->select())
-        QMessageBox::warning(this, tr("Query failed!"), tr("Query failed!") % "\n\n" % m_model->query().lastError().text());
+    sql.append("ORDER BY "
+                   "`Logs`.`Timestamp` ASC;");
+
+    QSqlQuery query(sql, m_database);
+
+    if (query.lastError().isValid())
+    {
+        QMessageBox::warning(this, tr("Query failed!"), tr("Query failed!") % "\n\n" % query.lastError().text());
+        return;
+    }
+
+    m_model->setQuery(query);
 }
 
 void MainWindow::showColumns()
@@ -140,7 +174,6 @@ void MainWindow::showContextMenu(const QPoint &pos)
     QMenu menu(this);
     const auto exec = [this,&menu,&pos](){ return menu.exec(m_ui->tableView->viewport()->mapToGlobal(pos)); };
 
-    qDebug() << m_model->record(index.row()).value(2);
     const auto data = m_model->data(index, Qt::EditRole).toString();
 
     switch (index.column())
@@ -204,13 +237,8 @@ void MainWindow::showContextMenu(const QPoint &pos)
 void MainWindow::setupModel()
 {
     m_ui->tableView->setModel(nullptr);
-    m_model = std::make_unique<SqlRelationalTableModel>(this, m_database);
-    m_model->setTable("Logs");
-    m_model->setRelation(ColumnHost, QSqlRelation("Hosts", "ID", "Name"));
-    m_model->setRelation(ColumnProcess, QSqlRelation("Processes", "ID", "Name"));
-    m_model->setRelation(ColumnFilename, QSqlRelation("Filenames", "ID", "Name"));
-    m_model->setRelation(ColumnThread, QSqlRelation("Threads", "ID", "Name"));
-    m_model->setRelation(ColumnType, QSqlRelation("Types", "ID", "Name"));
+    m_model = std::make_unique<QSqlQueryModel>(this);
+    updateQuery();
     m_ui->tableView->setModel(m_model.get());
     m_ui->tableView->setColumnHidden(ColumnID, true);
     showColumns();

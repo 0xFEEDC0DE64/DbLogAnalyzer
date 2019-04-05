@@ -6,6 +6,7 @@
 #include <QVariant>
 
 #include <utility>
+#include <memory>
 
 #include "gzipdevice.h"
 

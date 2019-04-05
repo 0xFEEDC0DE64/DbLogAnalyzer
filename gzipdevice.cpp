@@ -72,6 +72,6 @@ qint64 GzipDevice::writeData(const char *data, qint64 len)
 {
     Q_UNUSED(data)
     Q_UNUSED(len)
-    qFatal("no writes allowed in GzipDevice!");
+    throw std::runtime_error("writing not allowed!");
     return -1;
 }

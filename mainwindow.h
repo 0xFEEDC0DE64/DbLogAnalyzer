@@ -5,7 +5,7 @@
 
 #include <memory>
 
-class QSqlRelationalTableModel;
+class QSqlQueryModel;
 
 namespace Ui { class MainWindow; }
 
@@ -34,5 +34,5 @@ private:
     const std::unique_ptr<Ui::MainWindow> m_ui;
 
     QSqlDatabase m_database;
-    std::unique_ptr<QSqlRelationalTableModel> m_model;
+    std::unique_ptr<QSqlQueryModel> m_model;
 };
