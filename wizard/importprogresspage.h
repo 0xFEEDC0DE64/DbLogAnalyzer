@@ -16,9 +16,9 @@ class ImportProgressPage : public QWizardPage
 {
     Q_OBJECT
 
-    const QPixmap m_pixmapSucceeded { ":/loganalyzer/succeeded.png" };
-    const QPixmap m_pixmapFailed { ":/loganalyzer/failed.png" };
-    QMovie m_movieLoading { ":/loganalyzer/loading.gif" };
+    const QPixmap m_pixmapSucceeded { ":/loganalyzer/icons/succeeded.png" };
+    const QPixmap m_pixmapFailed { ":/loganalyzer/icons/failed.png" };
+    QMovie m_movieLoading { ":/loganalyzer/icons/loading.gif" };
 
 public:
     explicit ImportProgressPage(QWidget *parent = nullptr);

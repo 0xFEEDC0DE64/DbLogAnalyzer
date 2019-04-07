@@ -48,12 +48,12 @@ private:
 
     QVector<Item> m_items;
 
-    const QPixmap m_pixmapSucceeded { ":/loganalyzer/succeeded.png" };
-    const QPixmap m_pixmapFailed { ":/loganalyzer/failed.png" };
+    const QPixmap m_pixmapSucceeded { ":/loganalyzer/icons/succeeded.png" };
+    const QPixmap m_pixmapFailed { ":/loganalyzer/icons/failed.png" };
     const QPixmap m_pixmapEmpty { [this](){
         QPixmap pixmap(m_pixmapSucceeded.size());
         pixmap.fill();
         return pixmap;
     }() };
-    QMovie m_movieLoading { ":/loganalyzer/loading.gif" };
+    QMovie m_movieLoading { ":/loganalyzer/icons/loading.gif" };
 };
