@@ -1,4 +1,5 @@
 #include "importtypepage.h"
+#include "ui_importtypepage.h"
 
 #include <QVBoxLayout>
 #include <QRadioButton>
@@ -14,69 +15,40 @@
 #include "common.h"
 
 ImportTypePage::ImportTypePage(QWidget *parent) :
-    QWizardPage(parent)
+    QWizardPage(parent),
+    m_ui(std::make_unique<Ui::ImportTypePage>())
 {
-    setTitle(tr("Import type"));
-    setSubTitle(tr("Please select which type of log files you would like to import."));
-
-    auto layout = new QVBoxLayout;
-
-    m_radioLocal = new QRadioButton(tr("Local: Typically found under /tmp/testfw_log/tests"));
-    m_radioLocal->setChecked(true);
-    layout->addWidget(m_radioLocal);
-
-    m_radioRemote = new QRadioButton(tr("Remote: Typically found under /log or /log2"));
-    layout->addWidget(m_radioRemote);
-
-    layout->addStretch(1);
-
-    {
-        auto hboxLayout = new QHBoxLayout;
-
-        m_lineEdit = new QLineEdit;
-        hboxLayout->addWidget(m_lineEdit, 1);
-        registerField("folder", m_lineEdit);
-
-        {
-            auto toolButton = new QToolButton;
-            toolButton->setText(tr("Select..."));
-            connect(toolButton, &QAbstractButton::pressed, this, &ImportTypePage::selectFolder);
-            hboxLayout->addWidget(toolButton);
-        }
-
-        layout->addLayout(hboxLayout);
-    }
-
-    layout->addStretch(1);
-
-    setLayout(layout);
+    m_ui->setupUi(this);
+    m_ui->fileSelectionWidget->setMode(FileSelectionWidget::Mode::ExistingDirectory);
 }
+
+ImportTypePage::~ImportTypePage() = default;
 
 int ImportTypePage::nextId() const
 {
-    if (m_radioLocal->isChecked())
+    if (m_ui->radioButtonLocal->isChecked())
         return int(ImportWizard::Pages::LocalImport);
-    if (m_radioRemote->isChecked())
+    if (m_ui->radioButtonRemote->isChecked())
         return int(ImportWizard::Pages::RemoteImportScan);
     Q_UNREACHABLE();
 }
 
 bool ImportTypePage::validatePage()
 {
-    if (m_lineEdit->text().isEmpty())
+    if (m_ui->fileSelectionWidget->path().isEmpty())
     {
         QMessageBox::warning(this, tr("No logfolder defined!"), tr("No logfolder defined!"));
         return false;
     }
 
-    QDir dir(m_lineEdit->text());
+    QDir dir(m_ui->fileSelectionWidget->path());
     if (!dir.exists())
     {
         QMessageBox::warning(this, tr("Could not find logfolder!"), tr("Could not find logfolder!"));
         return false;
     }
 
-    if (m_radioLocal->isChecked())
+    if (m_ui->radioButtonLocal->isChecked())
     {
         ScanResult result;
         auto &host = result["__dummyHost"];
@@ -103,15 +75,8 @@ bool ImportTypePage::validatePage()
         wizard()->setProperty("result", QVariant::fromValue(result));
     }
 
-    if (m_radioRemote->isChecked())
+    if (m_ui->radioButtonRemote->isChecked())
         wizard()->setProperty("folder", dir.absolutePath());
 
     return true;
-}
-
-void ImportTypePage::selectFolder()
-{
-    const auto path = QFileDialog::getExistingDirectory(this, tr("Select log folder"));
-    if (!path.isEmpty())
-        m_lineEdit->setText(path);
 }

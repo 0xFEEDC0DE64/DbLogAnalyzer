@@ -1,9 +1,6 @@
 #include "tablespage.h"
 #include "ui_tablespage.h"
 
-#include <QGridLayout>
-#include <QLabel>
-
 #include "importwizard.h"
 #include "threads/tablecreatorthread.h"
 

@@ -1,12 +1,9 @@
 #include "databasepage.h"
 #include "ui_databasepage.h"
 
-#include <QVBoxLayout>
 #include <QSqlError>
 #include <QMessageBox>
 #include <QStringBuilder>
-#include <QSqlQuery>
-#include <QFileDialog>
 
 #include "widgets/databasewidget.h"
 #include "importwizard.h"

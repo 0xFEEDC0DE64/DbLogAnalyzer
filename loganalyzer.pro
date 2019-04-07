@@ -38,7 +38,8 @@ SOURCES += main.cpp \
     gzipdevice.cpp \
     dialogs/graphdialog.cpp \
     models/logmodel.cpp \
-    models/progressmodel.cpp
+    models/progressmodel.cpp \
+    threads/projectopenerthread.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -63,7 +64,8 @@ HEADERS += \
     gzipdevice.h \
     dialogs/graphdialog.h \
     models/logmodel.h \
-    models/progressmodel.h
+    models/progressmodel.h \
+    threads/projectopenerthread.h
 
 FORMS += \
     mainwindow.ui \
@@ -73,7 +75,8 @@ FORMS += \
     wizard/intropage.ui \
     wizard/databasepage.ui \
     dialogs/graphdialog.ui \
-    wizard/tablespage.ui
+    wizard/tablespage.ui \
+    wizard/importtypepage.ui
 
 RESOURCES += \
     resources.qrc

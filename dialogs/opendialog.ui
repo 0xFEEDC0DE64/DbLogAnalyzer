@@ -13,9 +13,12 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
    <item>
-    <widget class="DatabaseWidget" name="databaseWidget" native="true"/>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <widget class="DatabaseWidget" name="databaseWidget"/>
+     <widget class="QTreeView" name="treeView"/>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

@@ -2,8 +2,9 @@
 
 #include <QWizardPage>
 
-class QRadioButton;
-class QLineEdit;
+#include <memory>
+
+namespace Ui { class ImportTypePage; }
 
 class ImportTypePage : public QWizardPage
 {
@@ -11,17 +12,12 @@ class ImportTypePage : public QWizardPage
 
 public:
     explicit ImportTypePage(QWidget *parent = nullptr);
+    ~ImportTypePage() override;
 
     int nextId() const override;
 
     bool validatePage() override;
 
-private slots:
-    void selectFolder();
-
 private:
-    QRadioButton *m_radioLocal;
-    QRadioButton *m_radioRemote;
-
-    QLineEdit *m_lineEdit;
+    const std::unique_ptr<Ui::ImportTypePage> m_ui;
 };
