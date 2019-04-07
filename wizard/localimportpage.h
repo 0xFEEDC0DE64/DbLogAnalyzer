@@ -2,13 +2,12 @@
 
 #include <QWizardPage>
 
+#include <memory>
+
 #include "models/checklistmodel.h"
 #include "common.h"
 
-class QLineEdit;
-class QDateEdit;
-class QComboBox;
-class QLabel;
+namespace Ui { class LocalImportPage; }
 
 class LocalImportPage : public QWizardPage
 {
@@ -16,6 +15,7 @@ class LocalImportPage : public QWizardPage
 
 public:
     explicit LocalImportPage(QWidget *parent = nullptr);
+    ~LocalImportPage() override;
 
     int nextId() const override;
 
@@ -26,14 +26,11 @@ private slots:
     void updateSummary();
 
 private:
+    const std::unique_ptr<Ui::LocalImportPage> m_ui;
+
     ScanResult filterResult(ScanResult result) const;
 
     ScanResult m_result;
 
     ChecklistModel m_model;
-
-    QLineEdit *m_lineEditHost;
-    QDateEdit *m_dateEdit;
-    QComboBox *m_comboBox;
-    QLabel *m_labelSummary;
 };

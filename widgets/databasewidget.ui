@@ -20,10 +20,22 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="FileSelectionWidget" name="fileSelectionWidget" native="true"/>
        </item>
@@ -44,6 +56,18 @@
      </widget>
      <widget class="QWidget" name="page_2">
       <layout class="QFormLayout" name="formLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="1" column="1">
         <widget class="QLineEdit" name="lineEditUsername"/>
        </item>
@@ -55,12 +79,18 @@
          <property name="text">
           <string>&lt;b&gt;Hostname:&lt;/b&gt;</string>
          </property>
+         <property name="buddy">
+          <cstring>lineEditHostname</cstring>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="labelUsername">
          <property name="text">
           <string>&lt;b&gt;Username:&lt;/b&gt;</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEditUsername</cstring>
          </property>
         </widget>
        </item>
@@ -69,12 +99,18 @@
          <property name="text">
           <string>&lt;b&gt;Password:&lt;/b&gt;</string>
          </property>
+         <property name="buddy">
+          <cstring>lineEditPassword</cstring>
+         </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="labelDatabase">
          <property name="text">
           <string>&lt;b&gt;Database:&lt;/b&gt;</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEditDatabase</cstring>
          </property>
         </widget>
        </item>
@@ -102,6 +138,13 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEditHostname</tabstop>
+  <tabstop>lineEditUsername</tabstop>
+  <tabstop>lineEditPassword</tabstop>
+  <tabstop>lineEditDatabase</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

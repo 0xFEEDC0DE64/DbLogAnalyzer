@@ -9,6 +9,7 @@ namespace Ui { class FileSelectionWidget; }
 class FileSelectionWidget : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged USER true)
 
 public:
     enum class Mode {

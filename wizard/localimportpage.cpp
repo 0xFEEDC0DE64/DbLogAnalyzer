@@ -1,63 +1,32 @@
 #include "localimportpage.h"
+#include "ui_localimportpage.h"
 
-#include <QVBoxLayout>
-#include <QFormLayout>
-#include <QLineEdit>
 #include <QHostInfo>
-#include <QDateEdit>
-#include <QComboBox>
-#include <QListView>
-#include <QLabel>
+#include <QDate>
 #include <QMessageBox>
 #include <QStringBuilder>
 
 #include "importwizard.h"
 
 LocalImportPage::LocalImportPage(QWidget *parent) :
-    QWizardPage(parent)
+    QWizardPage(parent),
+    m_ui(std::make_unique<Ui::LocalImportPage>())
 {
-    setTitle(tr("Local Import"));
-    setSubTitle(tr("TODO..."));
+    m_ui->setupUi(this);
+
     setCommitPage(true);
 
+    m_ui->lineEditHost->setText(QHostInfo::localHostName());
+    m_ui->dateEdit->setDate(QDate::currentDate());
+    m_ui->comboBoxTimestamp->addItem(tr("Without milliseconds"), "HH:mm:ss");
+    m_ui->comboBoxTimestamp->addItem(tr("With milliseconds"), "HH:mm:ss.zzz");
+
+    m_ui->listView->setModel(&m_model);
+
     connect(&m_model, &ChecklistModel::dataChanged, this, &LocalImportPage::updateSummary);
-
-    auto layout = new QVBoxLayout;
-
-    {
-        auto hboxLayout = new QHBoxLayout;
-
-        {
-            auto formLayout = new QFormLayout;
-
-            m_lineEditHost = new QLineEdit(QHostInfo::localHostName());
-            formLayout->addRow(tr("Host:"), m_lineEditHost);
-
-            m_dateEdit = new QDateEdit(QDate::currentDate());
-            formLayout->addRow(tr("Date:"), m_dateEdit);
-
-            m_comboBox = new QComboBox;
-            m_comboBox->addItem(tr("Without milliseconds"), "HH:mm:ss");
-            m_comboBox->addItem(tr("With milliseconds"), "HH:mm:ss.zzz");
-            formLayout->addRow(tr("Timestamp:"), m_comboBox);
-
-            hboxLayout->addLayout(formLayout);
-        }
-
-        {
-            auto view = new QListView;
-            view->setModel(&m_model);
-            hboxLayout->addWidget(view, 1);
-        }
-
-        layout->addLayout(hboxLayout, 1);
-    }
-
-    m_labelSummary = new QLabel;
-    layout->addWidget(m_labelSummary);
-
-    setLayout(layout);
 }
+
+LocalImportPage::~LocalImportPage() = default;
 
 int LocalImportPage::nextId() const
 {
@@ -99,14 +68,14 @@ bool LocalImportPage::validatePage()
 
         const auto logfile = dates.values().first();
         dates.clear();
-        dates.insert(m_dateEdit->date(), logfile);
+        dates.insert(m_ui->dateEdit->date(), logfile);
     }
 
     result.clear();
-    result.insert(m_lineEditHost->text(), host);
+    result.insert(m_ui->lineEditHost->text(), host);
 
     wizard()->setProperty("result", QVariant::fromValue(result));
-    wizard()->setProperty("timeFormat", m_comboBox->currentData().toString());
+    wizard()->setProperty("timeFormat", m_ui->comboBoxTimestamp->currentData().toString());
 
     return true;
 }
@@ -139,7 +108,7 @@ void LocalImportPage::updateSummary()
         }
     }
 
-    m_labelSummary->setText(tr("Filters match %0 files (%1B)").arg(logFiles).arg(sizeStr));
+    m_ui->labelSummary->setText(tr("Filters match %0 files (%1B)").arg(logFiles).arg(sizeStr));
 }
 
 ScanResult LocalImportPage::filterResult(ScanResult result) const

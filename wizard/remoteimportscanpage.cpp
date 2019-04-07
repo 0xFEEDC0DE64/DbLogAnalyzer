@@ -52,7 +52,7 @@ void RemoteImportScanPage::initializePage()
 
     m_logView->clear();
 
-    m_thread = std::make_unique<RemoteScannerThread>(field("folder").toString(), this);
+    m_thread = std::make_unique<RemoteScannerThread>(wizard()->property("folder").toString(), this);
 
     connect(m_thread.get(), &RemoteScannerThread::progressUpdate, this, &RemoteImportScanPage::progressUpdate);
     connect(m_thread.get(), &RemoteScannerThread::logMessage, this, &RemoteImportScanPage::logMessage);

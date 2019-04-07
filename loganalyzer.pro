@@ -76,7 +76,8 @@ FORMS += \
     wizard/databasepage.ui \
     dialogs/graphdialog.ui \
     wizard/tablespage.ui \
-    wizard/importtypepage.ui
+    wizard/importtypepage.ui \
+    wizard/localimportpage.ui
 
 RESOURCES += \
     resources.qrc
