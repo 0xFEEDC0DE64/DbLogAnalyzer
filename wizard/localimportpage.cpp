@@ -144,7 +144,7 @@ void LocalImportPage::updateSummary()
 
 ScanResult LocalImportPage::filterResult(ScanResult result) const
 {
-    const auto processes = m_model.enabledItems().toSet();
+    const auto processes = m_model.enabledTexts().toSet();
 
     for (auto hostsIter = result.begin(); hostsIter != result.end(); hostsIter++)
     {

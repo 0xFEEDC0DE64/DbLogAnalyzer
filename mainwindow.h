@@ -5,7 +5,9 @@
 
 #include <memory>
 
-class QSqlQueryModel;
+#include "common.h"
+
+class LogModel;
 
 namespace Ui { class MainWindow; }
 
@@ -33,6 +35,6 @@ private:
 
     const std::unique_ptr<Ui::MainWindow> m_ui;
 
-    QSqlDatabase m_database;
-    std::unique_ptr<QSqlQueryModel> m_model;
+    std::unique_ptr<Project> m_project;
+    std::unique_ptr<LogModel> m_model;
 };

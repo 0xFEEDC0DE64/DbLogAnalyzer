@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QStringBuilder>
 #include <QSqlError>
+#include <QSqlQuery>
 
 OpenDialog::OpenDialog(QWidget *parent) :
     QDialog(parent),
@@ -16,21 +17,78 @@ OpenDialog::OpenDialog(QWidget *parent) :
 
 OpenDialog::~OpenDialog() = default;
 
-QSqlDatabase OpenDialog::database()
+std::unique_ptr<Project> &OpenDialog::project()
 {
-    return m_database;
+    return m_project;
 }
 
 void OpenDialog::submit()
 {
-    m_database = m_ui->databaseWidget->createConnection();
+    auto project = std::make_unique<Project>();
+    project->database = m_ui->databaseWidget->createConnection();
 
-    if (!m_database.open())
+    if (!project->database.open())
     {
-        QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % m_database.lastError().text());
-        m_database = {};
+        QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % project->database.lastError().text());
         return;
     }
+
+    {
+        QSqlQuery query("SELECT `ID`, `Name` FROM `Hosts`;", project->database);
+        if (query.lastError().isValid())
+        {
+            QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % query.lastError().text());
+            return;
+        }
+        while(query.next())
+            project->hosts.insert(query.value(0).toInt(), query.value(1).toString());
+    }
+
+    {
+        QSqlQuery query("SELECT `ID`, `Name` FROM `Processes`;", project->database);
+        if (query.lastError().isValid())
+        {
+            QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % query.lastError().text());
+            return;
+        }
+        while(query.next())
+            project->processes.insert(query.value(0).toInt(), query.value(1).toString());
+    }
+
+    {
+        QSqlQuery query("SELECT `ID`, `Name` FROM `Filenames`;", project->database);
+        if (query.lastError().isValid())
+        {
+            QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % query.lastError().text());
+            return;
+        }
+        while(query.next())
+            project->filenames.insert(query.value(0).toInt(), query.value(1).toString());
+    }
+
+    {
+        QSqlQuery query("SELECT `ID`, `Name` FROM `Threads`;", project->database);
+        if (query.lastError().isValid())
+        {
+            QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % query.lastError().text());
+            return;
+        }
+        while(query.next())
+            project->threads.insert(query.value(0).toInt(), query.value(1).toString());
+    }
+
+    {
+        QSqlQuery query("SELECT `ID`, `Name` FROM `Types`;", project->database);
+        if (query.lastError().isValid())
+        {
+            QMessageBox::warning(this, tr("Could not open database!"), tr("Could not open database!") % "\n\n" % query.lastError().text());
+            return;
+        }
+        while(query.next())
+            project->types.insert(query.value(0).toInt(), query.value(1).toString());
+    }
+
+    m_project = std::move(project);
 
     accept();
 }

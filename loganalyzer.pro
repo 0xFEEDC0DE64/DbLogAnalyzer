@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     widgets/databasewidget.cpp \
     gzipdevice.cpp \
     dialogs/graphdialog.cpp \
-    models/sqlrelationaltablemodel.cpp
+    models/logmodel.cpp \
+    models/progressmodel.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -61,7 +62,8 @@ HEADERS += \
     widgets/databasewidget.h \
     gzipdevice.h \
     dialogs/graphdialog.h \
-    models/sqlrelationaltablemodel.h
+    models/logmodel.h \
+    models/progressmodel.h
 
 FORMS += \
     mainwindow.ui \
@@ -70,7 +72,8 @@ FORMS += \
     widgets/databasewidget.ui \
     wizard/intropage.ui \
     wizard/databasepage.ui \
-    dialogs/graphdialog.ui
+    dialogs/graphdialog.ui \
+    wizard/tablespage.ui
 
 RESOURCES += \
     resources.qrc

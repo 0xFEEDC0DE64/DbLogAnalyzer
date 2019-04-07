@@ -5,6 +5,8 @@
 #include <QDate>
 #include <QtGlobal>
 #include <QMetaType>
+#include <QMap>
+#include <QSqlDatabase>
 
 #include <algorithm>
 
@@ -28,3 +30,12 @@ inline bool scanResultEmpty(const ScanResult &result)
         });
     });
 }
+
+struct Project {
+    QMap<int, QString> hosts;
+    QMap<int, QString> processes;
+    QMap<int, QString> filenames;
+    QMap<int, QString> threads;
+    QMap<int, QString> types;
+    QSqlDatabase database;
+};

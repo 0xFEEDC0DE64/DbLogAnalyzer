@@ -1,24 +1,20 @@
 #pragma once
 
 #include <QWizardPage>
-#include <QPixmap>
-#include <QMovie>
-#include <QVector>
 
 #include <memory>
+
+#include "models/progressmodel.h"
 
 class QLabel;
 class QSqlDatabase;
 
 class TableCreatorThread;
+namespace Ui { class TablesPage; }
 
 class TablesPage : public QWizardPage
 {
     Q_OBJECT
-
-    const QPixmap m_pixmapSucceeded { ":/loganalyzer/succeeded.png" };
-    const QPixmap m_pixmapFailed { ":/loganalyzer/failed.png" };
-    QMovie m_movieLoading { ":/loganalyzer/loading.gif" };
 
 public:
     explicit TablesPage(QWidget *parent = nullptr);
@@ -34,7 +30,11 @@ private slots:
     void someSlot(int index);
 
 private:
-    QVector<QLabel*> m_statusLabels;
+    void stopThread();
+
+    const std::unique_ptr<Ui::TablesPage> m_ui;
+
+    ProgressModel m_model;
 
     std::unique_ptr<TableCreatorThread> m_thread;
 };

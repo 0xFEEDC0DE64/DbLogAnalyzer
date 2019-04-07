@@ -213,8 +213,8 @@ void RemoteImportOverviewPage::updateSummary()
 
 ScanResult RemoteImportOverviewPage::filterResult(ScanResult result) const
 {
-    const auto hosts = m_modelHosts.enabledItems().toSet();
-    const auto processes = m_modelProcesses.enabledItems().toSet();
+    const auto hosts = m_modelHosts.enabledTexts().toSet();
+    const auto processes = m_modelProcesses.enabledTexts().toSet();
 
     for (auto hostsIter = result.begin(); hostsIter != result.end(); )
     {

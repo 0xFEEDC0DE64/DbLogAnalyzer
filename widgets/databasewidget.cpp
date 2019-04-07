@@ -12,16 +12,17 @@ DatabaseWidget::DatabaseWidget(QWidget *parent) :
 
     // for debugging
     setDriver("QMYSQL");
-//    setMysqlHostname("sql7.freemysqlhosting.net");
-//    setMysqlUsername("sql7285815");
-//    setMysqlPassword("BKhysrtqKl");
-//    setMysqlDatabase("sql7285815");
+    setMysqlHostname("sql7.freemysqlhosting.net");
+    setMysqlUsername("sql7285815");
+    setMysqlPassword("BKhysrtqKl");
+    setMysqlDatabase("sql7285815");
 
-    //setMysqlHostname("brunner.ninja");
-    setMysqlHostname("localhost");
-    setMysqlUsername("logtest");
-    setMysqlPassword("logtest");
-    setMysqlDatabase("logtest");
+//    setMysqlHostname("brunner.ninja");
+
+//    setMysqlHostname("localhost");
+//    setMysqlUsername("logtest");
+//    setMysqlPassword("logtest");
+//    setMysqlDatabase("logtest");
 }
 
 DatabaseWidget::~DatabaseWidget() = default;

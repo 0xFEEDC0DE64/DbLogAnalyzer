@@ -3,17 +3,16 @@
 
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QSqlRelationalTableModel>
 #include <QMessageBox>
 #include <QStringBuilder>
 #include <QMenu>
 #include <QAction>
 #include <QDateTime>
-#include <QDebug>
 
 #include "wizard/importwizard.h"
 #include "dialogs/opendialog.h"
 #include "dialogs/graphdialog.h"
+#include "models/logmodel.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_ui->pushButton, &QPushButton::pressed, this, &MainWindow::updateQuery);
 
     connect(m_ui->tableView, &QWidget::customContextMenuRequested, this, &MainWindow::showContextMenu);
+
+    m_ui->tableView->horizontalHeader()->setSectionsClickable(true);
+    QObject::connect(m_ui->tableView->horizontalHeader(), &QHeaderView::sectionClicked, [this](int index){
+    });
 }
 
 MainWindow::~MainWindow() = default;
@@ -54,7 +57,7 @@ void MainWindow::newClicked()
         m_ui->lineEdit->setEnabled(true);
         m_ui->pushButton->setEnabled(true);
 
-        m_database = wizard.database();
+        //m_project->database = wizard.database();
         setupModel();
     }
 }
@@ -71,7 +74,7 @@ void MainWindow::openClicked()
         m_ui->lineEdit->setEnabled(true);
         m_ui->pushButton->setEnabled(true);
 
-        m_database = dialog.database();
+        m_project = std::move(dialog.project());
         setupModel();
     }
 }
@@ -87,13 +90,12 @@ void MainWindow::closeClicked()
 
     m_ui->tableView->setModel(nullptr);
     m_model = nullptr;
-    m_database.close();
-    m_database = QSqlDatabase();
+    m_project = nullptr;
 }
 
 void MainWindow::graphClicked()
 {
-    GraphDialog(m_database, this).exec();
+    GraphDialog(m_project->database, this).exec();
 }
 
 void MainWindow::updateQuery()
@@ -138,9 +140,11 @@ void MainWindow::updateQuery()
     }
 
     sql.append("ORDER BY "
-                   "`Logs`.`Timestamp` ASC;");
+                   "`Logs`.`Timestamp` ASC "
+               "LIMIT "
+                   "0, 100;");
 
-    QSqlQuery query(sql, m_database);
+    QSqlQuery query(sql, m_project->database);
 
     if (query.lastError().isValid())
     {
@@ -237,7 +241,7 @@ void MainWindow::showContextMenu(const QPoint &pos)
 void MainWindow::setupModel()
 {
     m_ui->tableView->setModel(nullptr);
-    m_model = std::make_unique<QSqlQueryModel>(this);
+    m_model = std::make_unique<LogModel>(this);
     updateQuery();
     m_ui->tableView->setModel(m_model.get());
     m_ui->tableView->setColumnHidden(ColumnID, true);

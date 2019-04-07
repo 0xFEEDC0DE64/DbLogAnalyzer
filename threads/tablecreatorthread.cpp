@@ -96,6 +96,7 @@ void TableCreatorThread::run()
             return;
         }
 
+        sleep(1);
         emit someSignal(index++);
     }
 }
