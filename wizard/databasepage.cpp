@@ -30,7 +30,17 @@ bool DatabasePage::validatePage()
     Q_ASSERT(importWizard);
     Q_ASSERT(!importWizard->database().isOpen());
 
-    importWizard->database() = m_ui->databaseWidget->createConnection();
+    importWizard->database() = QSqlDatabase::addDatabase(m_ui->databaseWidget->driver());
+
+    if (importWizard->database().driverName() == "QSQLITE")
+        importWizard->database().setDatabaseName(m_ui->databaseWidget->sqliteFilepath());
+    else
+    {
+        importWizard->database().setHostName(m_ui->databaseWidget->mysqlHostname());
+        importWizard->database().setUserName(m_ui->databaseWidget->mysqlUsername());
+        importWizard->database().setPassword(m_ui->databaseWidget->mysqlPassword());
+        importWizard->database().setDatabaseName(m_ui->databaseWidget->mysqlDatabase());
+    }
 
     if (!importWizard->database().open())
     {

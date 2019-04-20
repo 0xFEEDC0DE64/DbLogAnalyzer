@@ -25,7 +25,17 @@ std::unique_ptr<Project> &OpenDialog::project()
 void OpenDialog::submit()
 {
     auto project = std::make_unique<Project>();
-    project->database = m_ui->databaseWidget->createConnection();
+    project->database = QSqlDatabase::addDatabase(m_ui->databaseWidget->driver());
+
+    if (project->database.driverName() == "QSQLITE")
+        project->database.setDatabaseName(m_ui->databaseWidget->sqliteFilepath());
+    else
+    {
+        project->database.setHostName(m_ui->databaseWidget->mysqlHostname());
+        project->database.setUserName(m_ui->databaseWidget->mysqlUsername());
+        project->database.setPassword(m_ui->databaseWidget->mysqlPassword());
+        project->database.setDatabaseName(m_ui->databaseWidget->mysqlDatabase());
+    }
 
     if (!project->database.open())
     {
